@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "iot flask",
+      "type": "debugpy",
+      "request": "launch",
+      // does not start for some reason
+      "module": "flask",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "preLaunchTask": "read-env-vars",
+      "justMyCode": false,
+      "args": ["run"]
+    }
+  ]
+}

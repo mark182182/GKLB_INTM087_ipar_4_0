@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Túl sok belépési kísérlet!</title>
+</head>
+<body>
+<h1>A felhasználó átlépte a megengedett belépési limitet</h1>
+<h2>Felhasználó ID: {{ userId }}</h2>
+<h2>Kártyaszám: {{ rfidValue }}</h2>
+<h3>Belépési idők:</h3>
+<ul>
+    {%- for time in entryTimes %}
+    <li>{{ time -}}</li>
+    {% endfor -%}
+</ul>
+</body>
+</html>
