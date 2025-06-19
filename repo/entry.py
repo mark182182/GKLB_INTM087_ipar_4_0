@@ -11,6 +11,7 @@ if is_arm:
 
 from repo.user_id import UserIdentifierRepository
 from smtp.smtp_client import smtp
+from globals import logged_in_user
 
 
 import logging
@@ -92,7 +93,7 @@ class EntryRepository:
                 [existingUserIdentifier.get_user_identifier_id()],
             )
             self.__db.conn.commit()
-            if existingUserIdentifier.get_letiltva():
+            if existingUserIdentifier.is_disabled():
                 self.__lcdI2c.denied_locked()
                 self.__send_mail_on_too_many_attempts(existingUserIdentifier)
                 raise ValueError(f"{rfidValue} is locked, cannot enter!")
@@ -121,8 +122,10 @@ class EntryRepository:
             self.__db.conn.commit()
 
             if is_arm:
-                self.__lcdI2c.allowed()
-
+                if logged_in_user.id is None:
+                    self.__lcdI2c.allowed()
+                else:
+                    self.__lcdI2c.logout()
             return userEntry[0]
         except ValueError as e:
             raise e

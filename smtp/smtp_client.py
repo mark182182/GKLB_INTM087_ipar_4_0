@@ -46,7 +46,7 @@ class SmtpClient:
 
     def send_mail_on_critical_temperature(
         self,
-        temperature: float,
+        max_temp: float,
         timestamp: str,
         userId: str,
         rfidValue: str,
@@ -58,7 +58,7 @@ class SmtpClient:
         template = env.get_template("critical_temp.html")
 
         renderedTemplate = template.render(
-            temperature=temperature,
+            max_temp=max_temp,
             timestamp=timestamp,
             userId=userId,
             rfidValue=rfidValue,

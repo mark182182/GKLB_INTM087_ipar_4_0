@@ -1,7 +1,7 @@
 # Logic for controlling a DC motor via L298N H-Bridge on Raspberry Pi
 import RPi.GPIO as GPIO
 
-DEFAULT_PWM_FREQUENCY_HZ = 1000
+DEFAULT_PWM_FREQUENCY_HZ = 100
 
 
 class MotorPWM:
@@ -16,12 +16,12 @@ class MotorPWM:
         self.pwm.start(0)
 
     def set_speed(self, speed):
-        """Set motor speed (0-10%).
+        """Set motor speed (0-5%).
 
-        The maximum speed is 10% of the PWM duty cycle, in order to prevent overcurrent/overheating.
+        The maximum speed is 5% of the PWM duty cycle, in order to prevent overcurrent/overheating.
 
         Args:
-            speed (int): Speed percentage (0-10).
+            speed (int): Speed percentage (0-5).
         """
         self.pwm.ChangeDutyCycle(speed)
 

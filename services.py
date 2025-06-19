@@ -36,5 +36,4 @@ if is_arm:
 
     switch = SwitchGPIO(lcd=lcdI2c, pin=17, callback=toggle_motor)
 
-    motor_service.test_motor()
     motor_state.is_running = False

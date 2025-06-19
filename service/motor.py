@@ -20,16 +20,6 @@ class MotorService:
 
         self.current_speed = self.get_threshold().speed_pct
 
-    def test_motor(self):
-        if is_arm:
-            logger.info("Testing motor functionality")
-            self.motor.forward()
-            self.motor.stop()
-            self.motor.backward()
-            self.motor.stop()
-        else:
-            logger.warning("Motor test skipped, not running on ARM architecture")
-
     def set_threshold(self, threshold: MotorThreshold):
         motor_config_repo.set_threshold(threshold)
 
