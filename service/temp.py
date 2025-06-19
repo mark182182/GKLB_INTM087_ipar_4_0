@@ -78,7 +78,8 @@ class TemperatureMonitor:
         now = time.time()
         if len(self.measurements) == 30 and (now - self.last_email_time > 600):
             logger.info("Sending email notification for critical temperature.")
-            self._send_critical_temperature_email(temp, self.measurements)
+            max_temp = max(self.measurements)
+            self._send_critical_temperature_email(max_temp, self.measurements)
 
     def _apply_gradual_motor_slowdown(self, temp_diff_pct, threshold):
         if temp_diff_pct >= self.stop_threshold_pct:
@@ -109,12 +110,12 @@ class TemperatureMonitor:
             )
             motor_service.set_speed(threshold.speed_pct * 1.2)
 
-    def _send_critical_temperature_email(self, temp, measurements):
+    def _send_critical_temperature_email(self, max_temp, measurements):
         imageData = self._create_temperature_graph(measurements)
         try:
             timestamp = time.time() - len(measurements) * self.measurement_interval_secs
             smtp.send_mail_on_critical_temperature(
-                temperature=temp,
+                max_temp=max_temp,
                 timestamp=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp)),
                 userId=None,  # TODO: Replace with actual user ID if available
                 rfidValue=None,  # TODO: Replace with actual RFID value if available

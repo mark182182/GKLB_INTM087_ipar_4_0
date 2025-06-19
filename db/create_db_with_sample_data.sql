@@ -151,7 +151,7 @@ INSERT INTO `iot`.`rfid` VALUES (NULL, '1913502801');
 INSERT INTO `iot`.`user_identifier` VALUES (NULL, 1,1,0);
 INSERT INTO `iot`.`user_identifier` VALUES (NULL, 2,2,1);
 
-INSERT INTO `iot`.`motor_config` VALUES (1, 25.0, 5.0);
+INSERT INTO `iot`.`motor_config` VALUES (1, 5.0, 28.4);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
