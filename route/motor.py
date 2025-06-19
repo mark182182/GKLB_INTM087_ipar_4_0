@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 import jsonpickle
+from models.motor import MotorThreshold
 from services import motor_service
 from repos import motor_event_repo
 
@@ -20,13 +21,13 @@ def get_thresholds():
         return jsonpickle.encode({"error": "Failed to retrieve motor thresholds"}), 500
 
 
-@motor_route.route("/motor/config", methods=["POST"])
+@motor_route.route("/motor/config", methods=["PUT"])
 def set_thresholds():
     try:
         data = request.get_json()
         speed_pct = data.get("speed_pct")
         critical_temp = data.get("critical_temp")
-        motor_service.set_threshold(speed_pct, critical_temp)
+        motor_service.set_threshold(MotorThreshold(speed_pct, critical_temp))
         return jsonpickle.encode({"status": "ok"})
     except Exception as e:
         logger.error(f"Error setting motor thresholds: {e}")

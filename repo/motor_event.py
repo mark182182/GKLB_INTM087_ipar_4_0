@@ -21,10 +21,7 @@ class MotorEventRepo:
         finally:
             cursor.close()
 
-    def __create_motor_event_from_results(self, results):
-        if not results:
-            return None
-        row = results[0]
+    def __create_motor_event_from_results(self, row):
         return MotorEventDto(
             id=row[0], event_time=row[1], userId=row[2], action=row[3], speed=row[4]
         )

@@ -1,6 +1,7 @@
+from datetime import datetime
 import jsonpickle
 from flask import Blueprint, request
-from repo.temp import TemperatureRepo
+from repos import temp_repo
 
 import logging
 
@@ -16,8 +17,14 @@ def get_temperatures():
         end = request.args.get("end")
         logger.info("Retrieving temperatures from %s to %s", start, end)
 
-        temps = TemperatureRepo.get_temperatures(start, end)
-        return jsonpickle.encode([t.__dict__ for t in temps]), 200
+        temps = temp_repo.get_temperatures(start, end)
+        result = []
+        for t in temps:
+            d = t.__dict__.copy()
+            if isinstance(d.get("measured_at"), datetime):
+                d["measured_at"] = d["measured_at"].strftime("%Y-%m-%d")
+            result.append(d)
+        return jsonpickle.encode(result), 200
 
     except Exception as e:
         return {"error": "Failed to retrieve temperatures", "details": str(e)}, 500

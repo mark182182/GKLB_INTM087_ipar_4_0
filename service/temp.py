@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import base64
 import threading
 import time
-from globals import motor_state
+from globals import motor_state, logged_in_user
 
 import logging
 
@@ -122,8 +122,8 @@ class TemperatureMonitor:
             smtp.send_mail_on_critical_temperature(
                 max_temp=max_temp,
                 timestamp=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp)),
-                userId=None,  # TODO: Replace with actual user ID if available
-                rfidValue=None,  # TODO: Replace with actual RFID value if available
+                userId=logged_in_user.id
+                rfidValue=logged_in_user.rfidValue
                 imageData=imageData,
             )
             self.last_email_time = time.time()
