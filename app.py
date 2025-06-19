@@ -70,11 +70,15 @@ if is_arm:
     temp_repo = TemperatureRepo(db)
     temp_service = TemperatureService(temp_repo)
 
-    temp_monitor = TemperatureMonitor(temp_service, motor_service, lcdI2c)
+    temp_monitor = TemperatureMonitor(temp_service, lcdI2c)
     temp_monitor.start()
 
     global motor_running
+
     motor_running = False
+    motor_service.test_motor()
+
+    motor_running = True
 
 
 if is_arm:
@@ -92,6 +96,7 @@ if is_arm:
             motor_service.stop()
             motor_running = False
 
+    # TODO: does not work for some reason
     switch = SwitchGPIO(pin=17, callback=toggle_motor)
 
 

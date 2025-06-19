@@ -1,5 +1,3 @@
-from typing import Optional
-from models.user import User
 from service.motor import MotorService
 from repo.motor_event import MotorEventRepo
 from db.db import Database

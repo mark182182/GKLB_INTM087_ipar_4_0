@@ -10,10 +10,22 @@ if is_arm:
 
 
 class MotorService:
+    is_motor_running = False
+
     def __init__(self, in1_pin, in2_pin, en_pin, motor_event_repo):
         self.motor_event_repo = motor_event_repo
         if is_arm:
             self.motor = MotorPWM(in1_pin, in2_pin, en_pin)
+
+    def test_motor(self):
+        if is_arm:
+            logger.info("Testing motor functionality")
+            self.motor.forward()
+            self.motor.stop()
+            self.motor.backward()
+            self.motor.stop()
+        else:
+            logger.warning("Motor test skipped, not running on ARM architecture")
 
     def set_threshold(self, threshold: MotorThreshold):
         self.motor_event_repo.set_threshold(threshold)
@@ -29,20 +41,37 @@ class MotorService:
 
     def forward(self, userId=None):
         if is_arm:
-            logger.info(f"Motor moving forward for userId: {userId}")
-            self.motor.forward()
+            try:
+                self.is_motor_running = True
+                logger.info(f"Motor moving forward for userId: {userId}")
+                self.motor.forward()
+            except Exception as e:
+                logger.error(f"Error occurred while moving motor forward: {e}")
+            finally:
+                self.is_motor_running = False
         self.motor_event_repo.insert_event(userId, MotorEvent.FORWARD)
 
     def backward(self, userId=None):
         if is_arm:
-            logger.info(f"Motor moving backward for userId: {userId}")
-            self.motor.backward()
+            try:
+                self.is_motor_running = True
+                logger.info(f"Motor moving backward for userId: {userId}")
+                self.motor.backward()
+            except Exception as e:
+                logger.error(f"Error occurred while moving motor backward: {e}")
+            finally:
+                self.is_motor_running = False
         self.motor_event_repo.insert_event(userId, MotorEvent.BACKWARD)
 
     def stop(self, userId=None):
         if is_arm:
-            logger.info(f"Motor stopping for userId: {userId}")
-            self.motor.stop()
+            try:
+                logger.info(f"Motor stopping for userId: {userId}")
+                self.motor.stop()
+            except Exception as e:
+                logger.error(f"Error occurred while stopping motor: {e}")
+            finally:
+                self.is_motor_running = False
         self.motor_event_repo.insert_event(userId, MotorEvent.STOP)
 
     def cleanup(self):
