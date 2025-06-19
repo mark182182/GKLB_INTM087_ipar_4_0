@@ -1,7 +1,7 @@
 from config import is_arm
 from models.motor import MotorThreshold, MotorEvent
 from repos import motor_event_repo, motor_config_repo
-from globals import motor_state
+from globals import motor_state, logged_in_user
 
 import logging
 
@@ -26,14 +26,16 @@ class MotorService:
     def get_threshold(self) -> MotorThreshold:
         return motor_config_repo.get_threshold()
 
-    def set_speed(self, speed, userId=None):
+    def set_speed(self, speed):
         if is_arm:
+            userId = logged_in_user.id
             logger.info(f"Setting motor speed to {speed}% for userId: {userId}")
             self.motor.set_speed(speed)
         motor_event_repo.insert_event(userId, MotorEvent.SET_SPEED, speed)
 
-    def forward(self, userId=None):
+    def forward(self):
         if is_arm:
+            userId = logged_in_user.id
             try:
                 motor_state.is_running = True
                 logger.info(f"Motor moving forward for userId: {userId}")
@@ -44,8 +46,9 @@ class MotorService:
                 motor_state.is_running = False
         motor_event_repo.insert_event(userId, MotorEvent.FORWARD)
 
-    def backward(self, userId=None):
+    def backward(self):
         if is_arm:
+            userId = logged_in_user.id
             try:
                 motor_state.is_running = True
                 logger.info(f"Motor moving backward for userId: {userId}")
@@ -56,8 +59,9 @@ class MotorService:
                 motor_state.is_running = False
         motor_event_repo.insert_event(userId, MotorEvent.BACKWARD)
 
-    def stop(self, userId=None):
+    def stop(self):
         if is_arm:
+            userId = logged_in_user.id
             try:
                 logger.info(f"Motor stopping for userId: {userId}")
                 self.motor.stop()

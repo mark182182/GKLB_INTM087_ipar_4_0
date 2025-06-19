@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, request
 import jsonpickle
 from models.motor import MotorThreshold
@@ -47,7 +48,13 @@ def get_events():
         userId = request.args.get("userId")
         logger.info(f"Retrieving motor events for userId: {userId}")
         events = motor_event_repo.get_events(userId)
-        return jsonpickle.encode([e.__dict__ for e in events]), 200
+        result = []
+        for e in events:
+            d = e.__dict__.copy()
+            if isinstance(d.get("event_time"), datetime):
+                d["event_time"] = d["event_time"].strftime("%Y-%m-%d %H:%M:%S")
+            result.append(d)
+        return jsonpickle.encode(result), 200
     except Exception as e:
         logger.error(f"Error retrieving motor events: {e}")
         return (
