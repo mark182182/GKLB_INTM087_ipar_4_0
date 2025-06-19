@@ -22,7 +22,7 @@ def get_temperatures():
         for t in temps:
             d = t.__dict__.copy()
             if isinstance(d.get("measured_at"), datetime):
-                d["measured_at"] = d["measured_at"].strftime("%Y-%m-%d")
+                d["measured_at"] = d["measured_at"].strftime("%Y-%m-%d %H:%M:%S")
             result.append(d)
         return jsonpickle.encode(result), 200
 

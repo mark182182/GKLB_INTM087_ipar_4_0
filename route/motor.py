@@ -27,7 +27,9 @@ def set_thresholds():
         data = request.get_json()
         speed_pct = data.get("speed_pct")
         critical_temp = data.get("critical_temp")
-        motor_service.set_threshold(MotorThreshold(speed_pct, critical_temp))
+        motor_service.set_threshold(
+            MotorThreshold(speed_pct=speed_pct, critical_temp=critical_temp)
+        )
         return jsonpickle.encode({"status": "ok"})
     except Exception as e:
         logger.error(f"Error setting motor thresholds: {e}")
