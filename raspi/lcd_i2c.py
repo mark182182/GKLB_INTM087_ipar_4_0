@@ -19,16 +19,16 @@ class LcdI2c:
         self._msg_queue.put(messages)
 
     def allowed(self):
-        self._process_queue(["Belepes", "engedelyezve!"])
+        self.print_on_lcd(["Belepes", "engedelyezve!"])
 
     def denied_generic(self):
-        self.prin_process_queuet_on_lcd(["Belepes", "megtagadva!"])
+        self.print_on_lcd(["Belepes", "megtagadva!"])
 
     def denied_locked(self):
-        self._process_queue(["Kartya", "letiltva!"])
+        self.print_on_lcd(["Kartya", "letiltva!"])
 
     def denied_unknown(self):
-        self._process_queue(["Kartya nem", "ismert!"])
+        self.print_on_lcd(["Kartya nem", "ismert!"])
 
     def __wait_for_login(self):
         self.__lcd.clear()
@@ -40,7 +40,7 @@ class LcdI2c:
         self.__lcd.text("Belepve:", 1)
         self.__lcd.text(f"{logged_in_user.rfid}", 2)
 
-    def _process_queue(self, messages: list[str]):
+    def _process_queue(self):
         while True:
             try:
                 messages = self._msg_queue.get(timeout=1)

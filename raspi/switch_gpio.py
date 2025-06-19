@@ -22,7 +22,7 @@ class SwitchGPIO:
     def _handle_press(self, channel):
         logger.info(f"Switch pressed on pin {self.pin}")
         if logged_in_user.id is None:
-            self.lcd.print_on_lcd("Kerem", "lepjen be!")
+            self.lcd.print_on_lcd(["Kerem", "lepjen be!"])
         else:
             self.callback()
 
