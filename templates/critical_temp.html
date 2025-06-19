@@ -8,15 +8,12 @@
   <body>
     <h1>Kritikus hőmérséklet elérve!</h1>
     <h2>Hőmérséklet: {{ temperature }} °C</h2>
-    <h3>Időpont: {{ timestamp }}</h3>
+    <h3>Kezdeti időpont: {{ timestamp }}</h3>
     <h3>Felhasználó ID: {{ userId }}</h3>
     <h3>Kártyaszám: {{ rfidValue }}</h3>
     <p>A szenzor kritikus hőmérsékletet mért, kérjük ellenőrizze a hűtést!</p>
-    <h3>Hőmérséklet idődiagram az elmúlt 1 percben:</h3>
-    <img
-      src="data:image/png;base64,{{ image_data }}"
-      alt="Hőmérséklet szenzor idődiagramja"
-      style="max-width: 100%; height: auto"
-    />
+    <h3>
+      A hőmérséklet idődiagramja csatolmányban szerepel a kezdeti időponttól.
+    </h3>
   </body>
 </html>
