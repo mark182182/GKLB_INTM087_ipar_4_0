@@ -1,3 +1,6 @@
+import base64
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 import smtplib
 from email.mime.text import MIMEText
 
@@ -65,19 +68,21 @@ class SmtpClient:
             image_data=imageData,
         )
 
-        msg = MIMEText(renderedTemplate)
-        msg.set_type("text/html")
+        msg = MIMEMultipart()
+
         msg["Subject"] = "Kritikus hőmérséklet elérve!"
         msg["From"] = fromAddr
         msg["To"] = toAddr
 
-        attachment = MIMEText(imageData, "base64", "utf-8")
-        attachment.add_header(
+        msg.attach(MIMEText(renderedTemplate, "html"))
+
+        image_bytes = base64.b64decode(imageData)
+        image = MIMEImage(image_bytes, name="temperature_graph.png")
+        image.add_header(
             "Content-Disposition", "attachment", filename="temperature_graph.png"
         )
-        attachment.add_header("Content-ID", "<temperature_graph>")
-        msg.attach(attachment)
-        msg["Content-Type"] = 'multipart/mixed; boundary="boundary"'
+        image.add_header("Content-ID", "<temperature_graph>")
+        msg.attach(image)
 
         self.__server.sendmail(fromAddr, toAddr, msg.as_string())
 
