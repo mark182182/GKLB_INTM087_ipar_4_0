@@ -4,6 +4,10 @@ from globals import logged_in_user
 
 from repo.entry import EntryRepository
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class RfidSpi:
     __entryRepo: EntryRepository
@@ -23,13 +27,13 @@ class RfidSpi:
                 self.__is_reading = True
                 uid = self.__rdr.read_id(as_number=True)
                 if uid is not None:
-                    print(f"reading card: {uid}")
+                    logger.info(f"Reading card: {uid}")
                     userEntry = self.__entryRepo.check_entry_for_rfid(uid)
                     logged_in_user.id = userEntry.get_user().get_user_id()
                     logged_in_user.rfid = userEntry.get_rfid_id()
                 self.__is_reading = False
         except ValueError as e:
-            print(e)
+            logger.info(e)
             self.__is_reading = False
         finally:
             schedule = threading.Timer(1, self.__wait_for_input)

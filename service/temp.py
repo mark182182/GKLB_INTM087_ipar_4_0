@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import base64
 import threading
 import time
+from globals import motor_state
 
 import logging
 
@@ -70,13 +71,15 @@ class TemperatureMonitor:
                     f"Current temperature: {temp:.1f}C, below critical threshold."
                 )
                 self._apply_motor_speed_up(temp, threshold)
-                self.lcd.print_on_lcd(["Homerseklet:", f"{temp:.1f}C"])
+                if motor_state.is_running:
+                    self.lcd.print_on_lcd(["Homerseklet:", f"{temp:.1f}C"])
             time.sleep(self.measurement_interval_secs)
 
     def _handle_threshold_logic(self, temp, threshold):
         temp_diff_pct = (threshold.critical_temp - temp) / threshold.critical_temp
         self._apply_gradual_motor_slowdown(temp_diff_pct, threshold)
-        self.lcd.print_on_lcd([f"Kritikus ho!", f"T={temp:.1f}C"])
+        if motor_state.is_running:
+            self.lcd.print_on_lcd([f"Kritikus ho!", f"T={temp:.1f}C"])
         now = time.time()
         if len(self.measurements) == 30 and (now - self.last_email_time > 600):
             logger.info("Sending email notification for critical temperature.")

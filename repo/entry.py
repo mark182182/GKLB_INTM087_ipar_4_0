@@ -13,6 +13,11 @@ from repo.user_id import UserIdentifierRepository
 from smtp.smtp_client import smtp
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class EntryRepository:
     __db: Database
     __userIdentifierRepo: UserIdentifierRepository
@@ -146,7 +151,7 @@ class EntryRepository:
         for entry in entries:
             entryTimes.append(entry.get_entry_time())
         if len(entries) == 3:
-            print("Too many attempts with locked card, sending e-mail")
+            logger.warning("Too many attempts with locked card, sending e-mail")
             smtp.send_email_on_unauthorized(
                 userIdentifier.get_rfid_value(),
                 userIdentifier.get_user_id(),

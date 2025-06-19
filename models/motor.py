@@ -1,5 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import Field, dataclass
 import enum
+
+
+@dataclass(kw_only=True)
+class MotorState:
+    is_running: bool = Field(default=False)
 
 
 class MotorEvent(enum.Enum):

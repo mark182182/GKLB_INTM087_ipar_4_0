@@ -1,6 +1,7 @@
 from config import is_arm
 from models.motor import MotorThreshold, MotorEvent
 from repos import motor_event_repo, motor_config_repo
+from globals import motor_state
 
 import logging
 
@@ -12,7 +13,6 @@ if is_arm:
 
 class MotorService:
     current_speed = 0
-    is_motor_running = False
 
     def __init__(self, in1_pin, in2_pin, en_pin):
         if is_arm:
@@ -45,25 +45,25 @@ class MotorService:
     def forward(self, userId=None):
         if is_arm:
             try:
-                self.is_motor_running = True
+                motor_state.is_running = True
                 logger.info(f"Motor moving forward for userId: {userId}")
                 self.motor.forward()
             except Exception as e:
                 logger.error(f"Error occurred while moving motor forward: {e}")
             finally:
-                self.is_motor_running = False
+                motor_state.is_running = False
         motor_event_repo.insert_event(userId, MotorEvent.FORWARD)
 
     def backward(self, userId=None):
         if is_arm:
             try:
-                self.is_motor_running = True
+                motor_state.is_running = True
                 logger.info(f"Motor moving backward for userId: {userId}")
                 self.motor.backward()
             except Exception as e:
                 logger.error(f"Error occurred while moving motor backward: {e}")
             finally:
-                self.is_motor_running = False
+                motor_state.is_running = False
         motor_event_repo.insert_event(userId, MotorEvent.BACKWARD)
 
     def stop(self, userId=None):
@@ -74,7 +74,7 @@ class MotorService:
             except Exception as e:
                 logger.error(f"Error occurred while stopping motor: {e}")
             finally:
-                self.is_motor_running = False
+                motor_state.is_running = False
         motor_event_repo.insert_event(userId, MotorEvent.STOP)
 
     def cleanup(self):
