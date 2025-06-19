@@ -122,8 +122,8 @@ class TemperatureMonitor:
             smtp.send_mail_on_critical_temperature(
                 max_temp=max_temp,
                 timestamp=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp)),
-                userId=logged_in_user.id
-                rfidValue=logged_in_user.rfidValue
+                userId=logged_in_user.id,
+                rfidValue=logged_in_user.rfidValue,
                 imageData=imageData,
             )
             self.last_email_time = time.time()
