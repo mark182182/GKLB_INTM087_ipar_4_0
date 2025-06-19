@@ -8,6 +8,10 @@ from config import cfg
 from env_var import read_env_var
 from typing import Union
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class Database:
     conn: Union[PooledMySQLConnection, MySQLConnection, CMySQLConnection] = None
@@ -36,11 +40,11 @@ class Database:
         initConn = mysql.connector.connect(
             host=host, user=resolvedUsername, password=resolvedPassword
         )
-        print("Creating sample database")
+        logger.info("Creating sample database")
         initSql = ""
         with open("./db/create_db_with_sample_data.sql", "r", encoding="utf-8") as f:
             initSql += f.read()
         cursor = initConn.cursor()
         cursor.execute(initSql, multi=True)
-        print("Sample database created successfully")
+        logger.info("Sample database created successfully")
         initConn.close()

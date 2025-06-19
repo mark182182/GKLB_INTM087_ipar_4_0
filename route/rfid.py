@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 import jsonpickle
-from app import rfidRepo
+from repos import rfid_repo
 
 rfid_route = Blueprint("rfid_route", __name__)
 
@@ -8,7 +8,7 @@ rfid_route = Blueprint("rfid_route", __name__)
 @rfid_route.route("/rfid/<rfidValue>", methods=["GET"])
 def get_rfid(rfidValue: str):
     try:
-        rfid = rfidRepo.get_rfid_by_value(rfidValue)
+        rfid = rfid_repo.get_rfid_by_value(rfidValue)
 
         return jsonpickle.encode(rfid)
     except Exception as e:
@@ -23,7 +23,7 @@ def get_rfid(rfidValue: str):
 @rfid_route.route("/rfids", methods=["GET"])
 def get_all_rfids():
     try:
-        rfids = rfidRepo.get_rfids()
+        rfids = rfid_repo.get_rfids()
         return jsonpickle.encode(rfids), 200
 
     except Exception as e:
@@ -36,7 +36,7 @@ def create_rfid():
         rfidDetails = request.get_json()
 
         if rfidDetails:
-            createdRfid = rfidRepo.create_rfid(rfidDetails)
+            createdRfid = rfid_repo.create_rfid(rfidDetails)
             return jsonpickle.encode(createdRfid), 200
         else:
             return (
@@ -59,7 +59,7 @@ def update_rfid():
         updateDetails = request.get_json()
 
         if updateDetails:
-            updatedRfid = rfidRepo.update_rfid(updateDetails)
+            updatedRfid = rfid_repo.update_rfid(updateDetails)
             return jsonpickle.encode(updatedRfid), 200
         else:
             return (
@@ -80,7 +80,7 @@ def update_rfid():
 def delete_rfid(rId):
     try:
         if rId:
-            rfidRepo.delete_rfid(rId)
+            rfid_repo.delete_rfid(rId)
             return "success", 200
         else:
             return jsonpickle.encode({"error": "No id provided in the request"}), 422

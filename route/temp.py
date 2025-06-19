@@ -1,4 +1,3 @@
-import app
 import jsonpickle
 from flask import Blueprint, request
 from repo.temp import TemperatureRepo

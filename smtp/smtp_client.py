@@ -1,8 +1,5 @@
 import smtplib
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.image import MIMEImage
-import base64
 
 from config import cfg
 from env_var import read_env_var
@@ -49,7 +46,7 @@ class SmtpClient:
 
     def send_mail_on_critical_temperature(
         self,
-        max_temp: float,
+        temperature: float,
         timestamp: str,
         userId: str,
         rfidValue: str,
@@ -61,26 +58,26 @@ class SmtpClient:
         template = env.get_template("critical_temp.html")
 
         renderedTemplate = template.render(
-            max_temp=max_temp,
+            temperature=temperature,
             timestamp=timestamp,
             userId=userId,
             rfidValue=rfidValue,
+            image_data=imageData,
         )
 
-        msg = MIMEMultipart()
+        msg = MIMEText(renderedTemplate)
+        msg.set_type("text/html")
         msg["Subject"] = "Kritikus hőmérséklet elérve!"
         msg["From"] = fromAddr
         msg["To"] = toAddr
 
-        msg.attach(MIMEText(renderedTemplate, "html"))
-
-        image_bytes = base64.b64decode(imageData)
-        image = MIMEImage(image_bytes, name="temperature_graph.png")
-        image.add_header(
+        attachment = MIMEText(imageData, "base64", "utf-8")
+        attachment.add_header(
             "Content-Disposition", "attachment", filename="temperature_graph.png"
         )
-        image.add_header("Content-ID", "<temperature_graph>")
-        msg.attach(image)
+        attachment.add_header("Content-ID", "<temperature_graph>")
+        msg.attach(attachment)
+        msg["Content-Type"] = 'multipart/mixed; boundary="boundary"'
 
         self.__server.sendmail(fromAddr, toAddr, msg.as_string())
 

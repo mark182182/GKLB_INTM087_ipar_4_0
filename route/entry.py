@@ -1,7 +1,7 @@
 import logging
 from flask import Blueprint
 import jsonpickle
-from app import entryRepo
+from repos import entry_repo
 
 entry_route = Blueprint("entry_route", __name__)
 
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 @entry_route.route("/entry/user/<userId>", methods=["GET"])
 def get_entry_by_user(userId: str):
     try:
-        userEntry = entryRepo.get_entry_by_user(userId)
+        userEntry = entry_repo.get_entry_by_user(userId)
 
         return jsonpickle.encode(userEntry)
     except Exception as e:
@@ -27,7 +27,7 @@ def get_entry_by_user(userId: str):
 @entry_route.route("/entry", methods=["GET"])
 def get_entries_for_all_users():
     try:
-        userEntries = entryRepo.get_entries_for_all_users()
+        userEntries = entry_repo.get_entries_for_all_users()
 
         return jsonpickle.encode(userEntries)
     except Exception as e:
@@ -44,7 +44,7 @@ def get_entries_for_all_users():
 def check_entry_for_rfid(rfidValue: str):
     try:
         logger.info(f"Checking entry for RFID: {rfidValue}")
-        userEntry = entryRepo.check_entry_for_rfid(rfidValue)
+        userEntry = entry_repo.check_entry_for_rfid(rfidValue)
         return jsonpickle.encode(userEntry), 200
     except Exception as e:
         logger.error(f"Error checking entry for RFID {rfidValue}: {e}")

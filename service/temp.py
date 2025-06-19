@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import base64
 import threading
 import time
-from globals import motor_service
 
 import logging
 
@@ -31,8 +30,11 @@ class TemperatureService:
 
 
 class TemperatureMonitor:
-    def __init__(self, temp_service: TemperatureService, lcd: LcdI2c):
+    def __init__(
+        self, temp_service: TemperatureService, motor_service: MotorService, lcd: LcdI2c
+    ):
         self.temp_service = temp_service
+        self.motor_service = motor_service
         self.lcd = lcd
         self.measurement_interval_secs = 1
         self.measurements = []
@@ -59,7 +61,7 @@ class TemperatureMonitor:
             self.measurements.append(temp)
             if len(self.measurements) > 30:
                 self.measurements.pop(0)
-            threshold = motor_service.get_threshold()
+            threshold = self.motor_service.get_threshold()
             if threshold and temp >= threshold.critical_temp:
                 logger.warning(f"Temperature critical: {temp:.1f}C.")
                 self._handle_threshold_logic(temp, threshold)
@@ -68,7 +70,7 @@ class TemperatureMonitor:
                     f"Current temperature: {temp:.1f}C, below critical threshold."
                 )
                 self._apply_motor_speed_up(temp, threshold)
-                self.lcd.print_on_lcd([f"Homerseklet: {temp:.1f}C"])
+                self.lcd.print_on_lcd(["Homerseklet:", f"{temp:.1f}C"])
             time.sleep(self.measurement_interval_secs)
 
     def _handle_threshold_logic(self, temp, threshold):
@@ -86,29 +88,29 @@ class TemperatureMonitor:
             logger.warning(
                 f"Temperature difference {temp_diff_pct:.1f}C exceeds stop threshold. Stopping motor."
             )
-            motor_service.stop()
+            self.motor_service.stop()
         elif temp_diff_pct >= self.speed_down_threshold_pct * 3:
             logger.warning(
                 f"Temperature difference {temp_diff_pct:.1f}C is high, setting speed to 25%."
             )
-            motor_service.set_speed(threshold.speed_pct * 0.25)
+            self.motor_service.set_speed(threshold.speed_pct * 0.25)
         elif temp_diff_pct >= self.speed_down_threshold_pct * 2:
             logger.warning(
                 f"Temperature difference {temp_diff_pct:.1f}C is moderate, setting speed to 50%."
             )
-            motor_service.set_speed(threshold.speed_pct * 0.5)
+            self.motor_service.set_speed(threshold.speed_pct * 0.5)
         elif temp_diff_pct >= self.speed_down_threshold_pct:
             logger.warning(
                 f"Temperature difference {temp_diff_pct:.1f}C is low, setting speed to 75%."
             )
-            motor_service.set_speed(threshold.speed_pct * 0.75)
+            self.motor_service.set_speed(threshold.speed_pct * 0.75)
 
     def _apply_motor_speed_up(self, temp, threshold):
         if temp < threshold.critical_temp * (1 - self.speed_up_threshold_pct):
             logger.info(
                 f"Temperature {temp:.1f}C is below speed up threshold, increasing speed."
             )
-            motor_service.set_speed(threshold.speed_pct * 1.2)
+            self.motor_service.set_speed(threshold.speed_pct * 1.2)
 
     def _send_critical_temperature_email(self, max_temp, measurements):
         imageData = self._create_temperature_graph(measurements)

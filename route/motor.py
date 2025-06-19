@@ -1,8 +1,7 @@
-from config import is_arm
 from flask import Blueprint, request
 import jsonpickle
-from app import motor_event_repo
-from globals import motor_service
+from services import motor_service
+from repos import motor_event_repo
 
 import logging
 
